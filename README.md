@@ -44,7 +44,7 @@ docker run --rm -p 3000:3000 \
   -e WOODPECKER_URL=https://ci.example.com \
   -e WOODPECKER_TOKEN=bot-user-token \
   -e WOODPECKER_MCP_TOKEN=a-long-random-secret \
-  ghcr.io/jfms7s/woodpecker-mcp:v0.1.0
+  ghcr.io/jfms7s/woodpecker-mcp:v0.1.1
 ```
 
 Claude Code (`~/.claude.json`, `mcpServers`):
