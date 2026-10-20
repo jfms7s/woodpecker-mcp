@@ -34,14 +34,16 @@ jobs:
           mkdir -p .quality
           mv "$RUNNER_TEMP/cov/lcov.info" .quality/coverage-ts.lcov
 
+      - run: npm run build
+
+      # Last step of the job: build-push needs test, so this report-only upload must never be able to block a deploy.
       - uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: coverage-fragments
           path: .quality/coverage-ts.lcov
           include-hidden-files: true
           retention-days: 7
-
-      - run: npm run build
 
   build-push:
     needs: test
@@ -81,7 +83,7 @@ jobs:
   # eng-metrics-lab (report-only): duplication, complexity and dead code; the collector picks up the artifact.
   quality:
     needs: [test]
-    if: ${{ always() && github.ref_type != 'tag' }}
+    if: ${{ !cancelled() && github.ref_type != 'tag' }}
     runs-on: ubuntu-latest
     permissions: {contents: read, packages: read}
     steps:
