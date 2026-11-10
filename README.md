@@ -19,7 +19,7 @@ An MCP server for [Woodpecker CI](https://woodpecker-ci.org) (built against v3.1
 | `woodpecker_approve_pipeline` / `woodpecker_decline_pipeline` | Act on a pipeline waiting for approval. |
 | `woodpecker_start_release` | Manual run on the default branch with `RELEASE_TAG=vX.Y.Z`; previews unless `confirm=true`. |
 
-`repo` is always `owner/name` or a numeric Woodpecker repo id.
+`repo` is always `owner/name` or a numeric Woodpecker repo id. Every tool that targets one pipeline takes its pipeline number as `number` (a number or a numeric string such as `"21"`; `woodpecker_get_pipeline` also accepts `"latest"`).
 
 ## Configuration
 

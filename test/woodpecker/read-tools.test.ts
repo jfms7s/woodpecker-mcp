@@ -100,7 +100,7 @@ describe('read tools', () => {
     const { call } = setup({ getPipeline: vi.fn(async () => withTestStep), getStepLogs });
     const result = (await call('woodpecker_get_step_logs', {
       repo: 'jfms7s/budget-manager',
-      pipeline: 42,
+      number: 42,
       step: 'test',
       grep: 'fail',
     })) as { step: unknown; lines: string[]; totalLines: number };
@@ -113,7 +113,7 @@ describe('read tools', () => {
   it('woodpecker_get_step_logs lists the steps when the name is wrong', async () => {
     const { call } = setup({ getPipeline: vi.fn(async () => withTestStep) });
     await expect(
-      call('woodpecker_get_step_logs', { repo: 'jfms7s/budget-manager', pipeline: 42, step: 'lint' }),
+      call('woodpecker_get_step_logs', { repo: 'jfms7s/budget-manager', number: 42, step: 'lint' }),
     ).rejects.toThrow('Steps: checks/test');
   });
 
@@ -122,7 +122,7 @@ describe('read tools', () => {
       getPipelineConfig: vi.fn(async () => [{ hash: 'h', name: 'checks', data: b64('steps: []\n') }]),
     });
     await expect(
-      call('woodpecker_get_pipeline_config', { repo: 'jfms7s/budget-manager', pipeline: 42 }),
+      call('woodpecker_get_pipeline_config', { repo: 'jfms7s/budget-manager', number: 42 }),
     ).resolves.toEqual([{ name: 'checks', yaml: 'steps: []\n' }]);
   });
 
