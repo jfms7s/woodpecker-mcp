@@ -5,7 +5,11 @@ export const repoInput = z
   .min(1)
   .describe('Repository as "owner/name" (e.g. "jfms7s/budget-manager") or a numeric Woodpecker repo id');
 
-export const pipelineNumber = z.number().int().positive().describe('Pipeline number, as shown in the Woodpecker UI');
+const positiveInt = z.number().int().positive();
+
+export const pipelineNumber = z
+  .union([positiveInt, z.string().regex(/^\d+$/).transform(Number).pipe(positiveInt)])
+  .describe('Pipeline number, as shown in the Woodpecker UI (a number or a numeric string)');
 
 export const confirmInput = z
   .boolean()

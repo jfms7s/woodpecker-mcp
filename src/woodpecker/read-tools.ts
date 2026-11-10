@@ -56,7 +56,7 @@ export function createReadTools(client: WoodpeckerClient, repos: RepoResolver): 
         "Read a step's log. Returns numbered lines: by default the last 200. Filter with grep (case-insensitive) and narrow with from_line/to_line; applied in that order (range, grep, tail). Output is capped at 1000 lines and 50,000 characters.",
       inputSchema: {
         repo: repoInput,
-        pipeline: pipelineNumber,
+        number: pipelineNumber,
         step: z
           .string()
           .min(1)
@@ -67,13 +67,13 @@ export function createReadTools(client: WoodpeckerClient, repos: RepoResolver): 
         to_line: z.number().int().min(1).optional().describe('Last line number to consider'),
       },
       annotations: READ,
-      handler: async ({ repo, pipeline, step, tail, grep, from_line, to_line }) => {
+      handler: async ({ repo, number, step, tail, grep, from_line, to_line }) => {
         const target = await repos.resolve(repo);
-        const found = findStep(await loadPipeline(client, target, pipeline), step);
-        const entries = await client.getStepLogs(target.id, pipeline, found.id);
+        const found = findStep(await loadPipeline(client, target, number), step);
+        const entries = await client.getStepLogs(target.id, number, found.id);
         return {
           repo: target.full_name,
-          pipeline,
+          pipeline: number,
           step: { id: found.id, name: found.name, state: found.state, exitCode: found.exit_code },
           ...selectLogLines(decodeLogEntries(entries), { tail, grep, fromLine: from_line, toLine: to_line }),
         };
@@ -82,11 +82,11 @@ export function createReadTools(client: WoodpeckerClient, repos: RepoResolver): 
     defineTool({
       name: 'woodpecker_get_pipeline_config',
       description: 'Show the pipeline config files (YAML) a pipeline actually ran with.',
-      inputSchema: { repo: repoInput, pipeline: pipelineNumber },
+      inputSchema: { repo: repoInput, number: pipelineNumber },
       annotations: READ,
-      handler: async ({ repo, pipeline }) => {
+      handler: async ({ repo, number }) => {
         const target = await repos.resolve(repo);
-        const files = await client.getPipelineConfig(target.id, pipeline);
+        const files = await client.getPipelineConfig(target.id, number);
         return files.map((f) => ({ name: f.name, yaml: Buffer.from(f.data, 'base64').toString('utf8') }));
       },
     }),
